@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "zip dist.zip src/*",
+    "build": "mkdir build && zip build/dist.zip src/*",
     "test": ""
   },
   "repository": {
