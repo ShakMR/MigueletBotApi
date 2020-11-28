@@ -56,7 +56,7 @@ workflows:
 #      - test
   deploy-stack-cf:
     jobs:
-      - cf/deploy:
+      - cf/create-stack:
           context:
             - cloudformation
           branch: primary
