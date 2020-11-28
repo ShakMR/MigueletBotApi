@@ -57,6 +57,8 @@ workflows:
   deploy-stack-cf:
     jobs:
       - cloudformation/create-stack:
+          context:
+            - cloudformation
           branch: primary
           stack-name: miguelet-lambda
           template-file-path: aws/lambda.json
