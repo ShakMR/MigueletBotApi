@@ -66,7 +66,7 @@ workflows:
               only: primary
       - release:
           context: 
-            - cloudformation
+            - s3_access
           filters:
             branches:
               only: primary
