@@ -2,7 +2,11 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
+
+orbs:
+  cloudformation: orbss/aws-cloudformation@0.1.6
+
 jobs:
   test:
     docker:
@@ -34,19 +38,6 @@ jobs:
           root: build
           paths:
             - build
-  cf-deploy:
-    steps:
-      - cloudformation/create-stack:
-          branch: primary
-          stack-name: miguelet-lambda
-          template-file-path: aws/lambda.json
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          aws-region: AWS_REGION
-      - cloudformation/describe-stacks:
-          stack-name: miguelet-lambda
-      - cloudformation/delete-stacks:
-          stack-name: miguelet-lambda
   release:
     docker:
       - image: circleci/python:latest
@@ -65,9 +56,21 @@ workflows:
 #      - test
   deploy-stack-cf:
     jobs:
-      - cf-deploy:
-          context: 
-            - cloudformation
+      - cloudformation/create-stack:
+          branch: primary
+          stack-name: miguelet-lambda
+          template-file-path: aws/lambda.json
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_REGION
+      - cloudformation/describe-stacks:
+          requires:
+            - cloudformation/create-stack
+          stack-name: miguelet-lambda
+      - cloudformation/delete-stack:
+          requires:
+            - cloudformation/describe-stacks
+          stack-name: miguelet-lambda
 #  build_and_deploy_lambda:
 #    jobs:
 #      - build:
