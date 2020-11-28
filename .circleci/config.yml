@@ -5,7 +5,8 @@
 version: 2.1
 
 orbs:
-  cloudformation: orbss/aws-cloudformation@0.1.6
+  cf-role: orbss/aws-cloudformation@0.1.6
+  cf-lambda: orbss/aws-cloudformation@0.1.6
 
 jobs:
   test:
@@ -56,23 +57,42 @@ workflows:
 #      - test
   deploy-stack-cf:
     jobs:
-      - cloudformation/create-stack:
+      - cf-role/create-stack:
           context:
             - cloudformation
+          branch: primary
+          stack-name: miguelet-role
+          template-file-path: aws/role.json
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_REGION
+      - cf-role/describe-stacks:
+          requires:
+            - cf-role/create-stack
+          stack-name: miguelet-role
+      - cf-lambda/create-stack:
+          context:
+            - cloudformation
+          requires:
+            - cf-role/create-stack
           branch: primary
           stack-name: miguelet-lambda
           template-file-path: aws/lambda.json
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           aws-region: AWS_REGION
-      - cloudformation/describe-stacks:
+      - cf-lambda/describe-stacks:
           requires:
-            - cloudformation/create-stack
+            - cf-lambda/create-stack
           stack-name: miguelet-lambda
-      - cloudformation/delete-stack:
+      - cf-lambda/delete-stack:
           requires:
-            - cloudformation/describe-stacks
+            - cf-lambda/describe-stacks
           stack-name: miguelet-lambda
+      - cf-role/delete-stack:
+          requires:
+            - cf-lambda/delete-stack
+          stack-name: miguelet-role
 #  build_and_deploy_lambda:
 #    jobs:
 #      - build:
