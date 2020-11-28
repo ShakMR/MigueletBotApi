@@ -1,26 +1,7 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Resources": {
-    "PullMarkets": {
-      "Type": "AWS::Lambda::Function",
-      "Properties": {
-        "FunctionName": "GetMigueletQuote",
-        "Handler": "src/index.js",
-        "Role": {
-          "Fn::GetAtt": [
-            "GetMigueletQuoteRole",
-            "Arn"
-          ]
-        },
-        "Code": {
-          "S3Bucket": "my-lambda-functions",
-          "S3Key": "GetMigueletQuoteCode"
-        },
-        "Runtime": "nodejs12.x",
-        "Timeout": 300
-      }
-    },
-    "PullMarketsRole": {
+    "MigueletLambdaRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "RoleName": "GetMigueletQuoteRole",
@@ -64,6 +45,25 @@
               }]
             }
           }]
+      }
+    },
+    "MigueletLambda": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": "GetMigueletQuote",
+        "Handler": "src/index.js",
+        "Role": {
+          "Fn::GetAtt": [
+            "GetMigueletQuoteRole",
+            "Arn"
+          ]
+        },
+        "Code": {
+          "S3Bucket": "my-lambda-functions",
+          "S3Key": "GetMigueletQuoteCode"
+        },
+        "Runtime": "nodejs12.x",
+        "Timeout": 300
       }
     }
   }
