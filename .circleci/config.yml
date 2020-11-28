@@ -1,0 +1,85 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: npm run test:lambda
+  build:
+    docker:
+      - image: circleci/node:lts
+      steps:
+        - checkout
+        - restore_cache:
+            keys:
+              - v1-dependencies-{{ checksum "package.json" }}
+              # fallback to using the latest cache if no exact match is found
+              - v1-dependencies-
+        - persist_to_workspace:
+            root: build
+            paths:
+              - build
+  release:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - attach_workspace:
+          at: /tmp/build
+      - deploy:
+          command: |
+            pip install aws-cli
+            cd scripts
+            bash update.sh
+workflows:
+  version: 2
+#  test:
+#    jobs:
+#      - test
+  deploy-stack-cf:
+    jobs:
+      - cloudformation/create-stack:
+          branch: primary
+          stack-name: miguelet-lambda
+          template-file-path: aws/lambda.json
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_REGION
+      - cloudformation/describe-stacks:
+          required:
+            - cloudformation/create-stack
+          stack-name: miguelet-lambda
+      - cloudformation/delete-stacks:
+          required:
+            - cloudformation/describe-stack
+          stack-name: miguelet-lambda
+#  build_and_deploy_lambda:
+#    jobs:
+#      - build
+#          requires:
+#            - test
+#          filters:
+#            - branches:
+#                only: primary
+#      - release:
+#          context: 
+#            - cloud_formation
+#          filters:
+#            branches:
+#              only: primary
+#          requires:
+#            - build
