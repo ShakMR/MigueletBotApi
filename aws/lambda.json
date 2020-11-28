@@ -77,7 +77,7 @@
           ]
         },
         "Code": {
-          "S3Bucket": "miguele-audios",
+          "S3Bucket": "miguelet-audios",
           "S3Key": "GetMigueletQuoteCode"
         },
         "Runtime": "nodejs12.x",
