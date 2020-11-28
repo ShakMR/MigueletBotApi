@@ -23,17 +23,30 @@ jobs:
   build:
     docker:
       - image: circleci/node:lts
-      steps:
-        - checkout
-        - restore_cache:
-            keys:
-              - v1-dependencies-{{ checksum "package.json" }}
-              # fallback to using the latest cache if no exact match is found
-              - v1-dependencies-
-        - persist_to_workspace:
-            root: build
-            paths:
-              - build
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - persist_to_workspace:
+          root: build
+          paths:
+            - build
+  cf-deploy:
+    steps:
+      - cloudformation/create-stack:
+          branch: primary
+          stack-name: miguelet-lambda
+          template-file-path: aws/lambda.json
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_REGION
+      - cloudformation/describe-stacks:
+          stack-name: miguelet-lambda
+      - cloudformation/delete-stacks:
+          stack-name: miguelet-lambda
   release:
     docker:
       - image: circleci/python:latest
@@ -52,24 +65,12 @@ workflows:
 #      - test
   deploy-stack-cf:
     jobs:
-      - cloudformation/create-stack:
-          branch: primary
-          stack-name: miguelet-lambda
-          template-file-path: aws/lambda.json
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          aws-region: AWS_REGION
-      - cloudformation/describe-stacks:
-          required:
-            - cloudformation/create-stack
-          stack-name: miguelet-lambda
-      - cloudformation/delete-stacks:
-          required:
-            - cloudformation/describe-stack
-          stack-name: miguelet-lambda
+      - cf-deploy:
+          context: 
+            - cloud_formation
 #  build_and_deploy_lambda:
 #    jobs:
-#      - build
+#      - build:
 #          requires:
 #            - test
 #          filters:
