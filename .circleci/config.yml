@@ -8,22 +8,22 @@ orbs:
   aws-s3: circleci/aws-s3@2.0.0
   
 jobs:
-#  test:
-#    docker:
-#      - image: circleci/node:lts
-#    steps:
-#      - checkout
-#      - restore_cache:
-#          keys:
-#            - v1-dependencies-{{ checksum "package.json" }}
-#            # fallback to using the latest cache if no exact match is found
-#            - v1-dependencies-
-#      - run: npm install
-#      - save_cache:
-#          paths:
-#            - node_modules
-#          key: v1-dependencies-{{ checksum "package.json" }}
-#      - run: npm run test
+  test:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: npm run test
   build:
     docker:
       - image: circleci/node:lts
@@ -53,14 +53,12 @@ jobs:
           to: 's3://miguelet-audios/GetMigueletQuote'
 workflows:
   version: 2
-#  test:
-#    jobs:
-#      - test
   build_and_deploy_lambda:
     jobs:
+      - test
       - build:
-#          requires:
-#            - test
+          requires:
+            - test
           filters:
             branches:
               only: primary
