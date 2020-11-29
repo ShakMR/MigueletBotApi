@@ -59,17 +59,11 @@
         ]
       }
     },
-    "MigueletS3": {
-      "Type" : "AWS::S3::Bucket",
-      "Properties": {
-        "BucketName": "miguelet-audios"
-      }
-    },
     "MigueletLambda": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "FunctionName": "GetMigueletQuote",
-        "Handler": "src/index.js",
+        "Handler": "index.handler",
         "Role": {
           "Fn::GetAtt": [
             "MigueletLambdaRole",
