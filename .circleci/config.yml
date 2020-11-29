@@ -50,7 +50,7 @@ jobs:
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           aws-region: AWS_REGION
           from: /tmp/build/build/dist.zip
-          to: 's3://miguelet-audios/dist.zip'
+          to: 's3://miguelet-audios/GetMigueletQuote'
 workflows:
   version: 2
 #  test:
