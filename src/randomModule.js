@@ -1,6 +1,7 @@
 /**
  * 
  * @param {AbstractFileProvider} provider
+ * @param {Object} config
  */
 const getRandomAudio = async (provider, config) => {
   const mapping = JSON.parse(await provider.getFile(config.MAPPING_FILE));
@@ -9,7 +10,7 @@ const getRandomAudio = async (provider, config) => {
   const audioMapping = mapping[randIndex];
   return {
     ...audioMapping,
-    URI: provider.getFileURI(audioMapping.file),
+    URI: await provider.getFileURI(audioMapping.file),
   };
 }
 

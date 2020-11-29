@@ -17,8 +17,6 @@ const handler = async function(event, context) {
   const { SOURCE_TYPE } = config;
   const { [SOURCE_TYPE]: providerConfig } = config; 
   
-  console.log(providerConfig, SOURCE_TYPES[SOURCE_TYPE]);
-  
   const provider = FileProviderFactory.create(SOURCE_TYPES[SOURCE_TYPE], providerConfig);
 
   try {

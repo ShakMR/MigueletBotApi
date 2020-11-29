@@ -10,7 +10,7 @@ module.exports = {
   SOURCE_TYPE: SOURCE_TYPE || 'S3',
   S3: {
     BUCKET: 'miguelet-audios',
-    BUCKET_PREFIX: 'files',
+    BUCKET_PREFIX: 'files/',
     REGION: 'eu-west-3',
   },
   FS: {

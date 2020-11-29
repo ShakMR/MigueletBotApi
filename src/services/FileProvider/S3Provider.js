@@ -22,7 +22,7 @@ class S3Provider extends AbstractFileProvider {
     }
   } 
   
-  async getFileURI(filename) {
+  async getFileURI(filename) {  
     const params = this.buildParams(filename);
     
     return new Promise((resolve, reject) => {
