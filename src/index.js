@@ -21,7 +21,17 @@ const handler = async function(event, context) {
   
   const provider = FileProviderFactory.create(SOURCE_TYPES[SOURCE_TYPE], providerConfig);
 
-  return getRandomAudio(provider, config);
+  try {
+    return getRandomAudio(provider, config);
+  } catch (err) {
+    matomo.track({
+      url: 'lambda-error',
+      action_name: 'Error',
+      error: err,
+      error_json: JSON.stringify(err),
+    })
+    throw err;
+  }
 }
 
 if (require.main === module) {
