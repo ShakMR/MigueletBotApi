@@ -25,7 +25,7 @@ const handler = async function(event, context) {
   });
   
   matomo.track({
-    url: `lambda/${event.path}`,
+    url: `https://lambda/${event.path}`,
     action_name: 'Lambda Init',
     cvar: JSON.stringify({
       '1': ['event', event],
@@ -34,7 +34,7 @@ const handler = async function(event, context) {
   })
 
   matomo.track({
-    url: `lambda/${event.path}`,
+    url: `https://lambda/${event.path}`,
     e_c: 'info log',
     e_a: 'init',
     e_n: 'event',
