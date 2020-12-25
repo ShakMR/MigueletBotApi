@@ -3,5 +3,10 @@
     "name": "fueraDeMiCesped",
     "tags": ["cesped", "fuera"],
     "file": "fueracesped.mp3"
+  },
+  {
+    "name": "utilizadAudios",
+    "tags": ["por favor", "utilizad", "audios"],
+    "file": "utilizadaudios.mp3"
   }
 ]
