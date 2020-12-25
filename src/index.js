@@ -23,8 +23,10 @@ const handler = async function(event, context) {
   matomo.track({
     url: "lambda",
     action_name: 'Lambda Init',
-    event: JSON.stringify(event),
-    context: JSON.stringify(context)
+    cvar: JSON.stringify({
+      '1': ['event', event],
+      '2': ['context', context],
+    })
   })
 
   const { SOURCE_TYPE } = config;
