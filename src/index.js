@@ -37,9 +37,14 @@ const handler = async function(event, context) {
   try {
     switch (func) {
       case 'file':
-        return getRandomAudio(provider, config);
+        return {
+          headers: { "Content-Type": "image/png" },
+          statusCode: 200,
+          body: (await getRandomAudio(provider, config)).toString('base64'),
+          isBase64Encoded: true
+        };
       case 'info':
-        return getRandomAudioInfo(provider, config);
+        return await getRandomAudioInfo(provider, config);
     }
   } catch (err) {
     matomo.track({
