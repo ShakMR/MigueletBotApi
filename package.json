@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/ShakMR/MigueletBotApi#readme",
   "dependencies": {
-    "matomo-tracker": "^2.2.4"
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "aws-sdk": "^2.799.0",
