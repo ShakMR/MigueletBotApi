@@ -47,9 +47,9 @@ jobs:
       - attach_workspace:
           at: /tmp/build
       - aws-cli/setup:
-          aws-access-key-id: AWS_LAMBDA_ACCESS_KEY
-          aws-secret-access-key: AWS_LAMBDA_SECRET_KEY
-          aws-region: AWS_REGION
+          aws-access-key-id: $AWS_LAMBDA_ACCESS_KEY
+          aws-secret-access-key: $AWS_LAMBDA_SECRET_KEY
+          aws-region: $AWS_REGION
       - aws-s3/copy:
           from: /tmp/build/build/dist.zip
           to: 's3://miguelet-audios/GetMigueletQuoteCode'
