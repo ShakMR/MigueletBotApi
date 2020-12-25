@@ -19,7 +19,7 @@ const getRandomAudio = async (provider, config) => {
 }
 
 const handler = async function(event, context) {
-  const tracker = new Tracker(config.MATOMO.SITE_ID, config.MATOMO.URL);
+  const tracker = new Tracker(config.MATOMO);
   
   tracker.trackEvent('lambdaEvent', event);
   tracker.trackEvent('lambdaContext', context);
@@ -36,7 +36,7 @@ const handler = async function(event, context) {
       case 'file':
         return (await getRandomAudio(provider, config)).toString('base64');
       case 'info':
-        return await getRandomAudioInfo(provider, config);
+        return { data: await getRandomAudioInfo(provider, config), event };
     }
   } catch (err) {
     throw err;

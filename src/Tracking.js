@@ -31,7 +31,6 @@ class Tracker {
     
     const trackerEndpoint = buildURL(this.url, params);
     fetch(trackerEndpoint)
-      .catch(err => throw err);
   }
 }
 
