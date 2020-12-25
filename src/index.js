@@ -3,7 +3,20 @@ const MatomoTracker = require('matomo-tracker');
 const config = require('./config');
 const { FileProviderFactory, SOURCE_TYPES} = require('./services/FileProvider/FileProviderFactory');
 
-const getRandomAudio = require('./randomModule');
+const chooseFile = require('./randomModule');
+
+const getRandomAudioInfo = async (provider, config) => {
+  const audioMapping = await chooseFile(provider, config);
+  return {
+    ...audioMapping,
+    URI: await provider.getFileURI(audioMapping.file),
+  };
+}
+
+const getRandomAudio = async (provider, config) => {
+  const audioMapping = await chooseFile(provider, config);
+  return provider.getFile(audioMapping.file);
+}
 
 const handler = async function(event, context) {
   const matomo = new MatomoTracker(config.MATOMO.SITE_ID, config.MATOMO.URL);
@@ -17,10 +30,17 @@ const handler = async function(event, context) {
   const { SOURCE_TYPE } = config;
   const { [SOURCE_TYPE]: providerConfig } = config; 
   
+  const { func } = event; // info of file
+  
   const provider = FileProviderFactory.create(SOURCE_TYPES[SOURCE_TYPE], providerConfig);
 
   try {
-    return getRandomAudio(provider, config);
+    switch (func) {
+      case 'file':
+        return getRandomAudio(provider, config);
+      case 'info':
+        return getRandomAudioInfo(provider, config);
+    }
   } catch (err) {
     matomo.track({
       url: 'lambda-error',
@@ -30,12 +50,6 @@ const handler = async function(event, context) {
     })
     throw err;
   }
-}
-
-if (require.main === module) {
-  handler({}, {})
-    .then(console.log)
-    .catch(console.error)
 }
 
 exports.handler = handler;

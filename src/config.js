@@ -1,5 +1,6 @@
 const {
-  SOURCE_TYPE
+  SOURCE_TYPE,
+  BASE_PATH = '../'
 } = process.env;
 
 module.exports = {
@@ -14,7 +15,7 @@ module.exports = {
     REGION: 'eu-west-3',
   },
   FS: {
-    BASE_PATH: '../',
+    BASE_PATH: BASE_PATH,
   },
   MAPPING_FILE: 'mapping.json' 
 }
