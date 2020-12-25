@@ -47,15 +47,11 @@ jobs:
       - attach_workspace:
           at: /tmp/build
       - aws-s3/copy:
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          aws-region: AWS_REGION
-          from: /tmp/build/build/dist.zip
-          to: 's3://miguelet-audios/GetMigueletQuoteCode'
-      - aws-cli/setup:
           aws-access-key-id: AWS_LAMBDA_ACCESS_KEY
           aws-secret-access-key: AWS_LAMBDA_SECRET_KEY
           aws-region: AWS_REGION
+          from: /tmp/build/build/dist.zip
+          to: 's3://miguelet-audios/GetMigueletQuoteCode'
       - run: aws lambda update-function-code --function-name GetMigueletQuote --s3-bucket miguelet-audios --s3-key GetMigueletQuoteCode --publish
 
 workflows:
