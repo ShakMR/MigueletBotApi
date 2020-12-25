@@ -34,16 +34,11 @@ const handler = async function(event, context) {
   
   const provider = FileProviderFactory.create(SOURCE_TYPES[SOURCE_TYPE], providerConfig);
 
-  console.log('SOURCE', SOURCE_TYPE, 'FUNCTION', func);
+  console.log('SOURCE', SOURCE_TYPE, 'FUNCTION', func, event, context);
   try {
     switch (func) {
       case 'file':
-        return {
-          headers: { "Content-Type": "image/png" },
-          statusCode: 200,
-          body: (await getRandomAudio(provider, config)).toString('base64'),
-          isBase64Encoded: true
-        };
+        return (await getRandomAudio(provider, config)).toString('base64');
       case 'info':
         return await getRandomAudioInfo(provider, config);
     }
