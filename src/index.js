@@ -34,6 +34,7 @@ const handler = async function(event, context) {
   
   const provider = FileProviderFactory.create(SOURCE_TYPES[SOURCE_TYPE], providerConfig);
 
+  console.log('SOURCE', SOURCE_TYPE, 'FUNCTION', func);
   try {
     switch (func) {
       case 'file':
