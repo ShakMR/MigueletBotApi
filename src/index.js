@@ -20,14 +20,26 @@ const getRandomAudio = async (provider, config) => {
 
 const handler = async function(event, context) {
   const matomo = new MatomoTracker(config.MATOMO.SITE_ID, config.MATOMO.URL);
+  matomo.on('error', function(err) {
+    throw err;
+  });
+  
   matomo.track({
-    url: "lambda",
+    url: `lambda/${event.path}`,
     action_name: 'Lambda Init',
     cvar: JSON.stringify({
       '1': ['event', event],
       '2': ['context', context],
     })
   })
+
+  matomo.track({
+    url: `lambda/${event.path}`,
+    e_c: 'info log',
+    e_a: 'init',
+    e_n: 'event',
+    e_v: JSON.stringify(event),
+  });
 
   const { SOURCE_TYPE } = config;
   const { [SOURCE_TYPE]: providerConfig } = config; 
@@ -36,7 +48,6 @@ const handler = async function(event, context) {
   
   const provider = FileProviderFactory.create(SOURCE_TYPES[SOURCE_TYPE], providerConfig);
 
-  console.log('SOURCE', SOURCE_TYPE, 'FUNCTION', func, event, context);
   try {
     switch (func) {
       case 'file':
