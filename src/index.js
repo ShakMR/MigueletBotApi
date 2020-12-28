@@ -1,4 +1,4 @@
-const Tracker = require('./Tracking');
+const MatomoTracker = require('matomo-tracker');
 
 const config = require('./config');
 const { FileProviderFactory, SOURCE_TYPES} = require('./services/FileProvider/FileProviderFactory');
@@ -19,10 +19,15 @@ const getRandomAudio = async (provider, config) => {
 }
 
 const handler = async function(event, context) {
-  const tracker = new Tracker(config.MATOMO);
-  
-  tracker.trackEvent('lambdaEvent', event);
-  tracker.trackEvent('lambdaContext', context);
+  const matomo = new MatomoTracker(config.MATOMO.SITE_ID, config.MATOMO.URL);
+  matomo.track({
+    url: "lambda",
+    action_name: 'Lambda Init',
+    cvar: JSON.stringify({
+      '1': ['event', event],
+      '2': ['context', context],
+    })
+  })
 
   const { SOURCE_TYPE } = config;
   const { [SOURCE_TYPE]: providerConfig } = config; 
@@ -39,6 +44,12 @@ const handler = async function(event, context) {
         return { data: await getRandomAudioInfo(provider, config), event };
     }
   } catch (err) {
+    matomo.track({
+      url: 'lambda-error',
+      action_name: 'Error',
+      error: err,
+      error_json: JSON.stringify(err),
+    })
     throw err;
   }
 }
