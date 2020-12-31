@@ -37,6 +37,8 @@ const handler = async function(event, context) {
     e_v: JSON.stringify(event),
   });
 
+  console.log(JSON.stringify(event));
+  
   const { SOURCE_TYPE } = config;
   const { [SOURCE_TYPE]: providerConfig } = config; 
   
