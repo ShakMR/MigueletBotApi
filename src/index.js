@@ -29,6 +29,14 @@ const handler = async function(event, context) {
     })
   })
 
+  matomo.track({
+    url: `lambda`,
+    e_c: 'info log',
+    e_a: 'init',
+    e_n: 'event',
+    e_v: JSON.stringify(event),
+  });
+
   const { SOURCE_TYPE } = config;
   const { [SOURCE_TYPE]: providerConfig } = config; 
   
