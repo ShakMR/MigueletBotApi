@@ -49,9 +49,19 @@ const handler = async function(event, context) {
   try {
     switch (func) {
       case 'file':
-        return (await getRandomAudio(provider, config)).toString('base64');
+        return {
+          headers: { "Content-Type": "audio/mpeg" },
+          statusCode: 200,
+          body: (await getRandomAudio(provider, config)).toString('base64'),
+          isBase64Encoded: true
+        }
       case 'info':
-        return { data: await getRandomAudioInfo(provider, config), event };
+        return {
+          headers: { "Content-Type": "application/json" },
+          statusCode: 200,
+          body: { data: await getRandomAudioInfo(provider, config) },
+          isBase64Encoded: false
+        }
     }
   } catch (err) {
     matomo.track({
@@ -60,7 +70,10 @@ const handler = async function(event, context) {
       error: err,
       error_json: JSON.stringify(err),
     })
-    throw err;
+    console.error(err);
+    return {
+      statusCode: 500,
+    }
   }
 }
 
