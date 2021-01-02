@@ -10,18 +10,21 @@ class SecretService {
   }
   
   fetch(secretsToFetch) {
-    const promises = secretsToFetch.map(secret => {
-      this.client.getSecretValue({SecretId: secret}, (err, data) => {
-        console.log('Fetching secrets', secret);
-        if (err) {
-          return console.error(err);
-        }
-        console.log('Secret found', secret);
-        if ('SecretString' in data) {
-          this.secrets[secret] = data.SecretString;
-        }
-      });
-    });
+    const promises = secretsToFetch.map(secret => new Promise((resolve, reject) => {
+        this.client.getSecretValue({SecretId: secret}, (err, data) => {
+          console.log('Fetching secrets', secret);
+          if (err) {
+            console.error(err);
+            return reject(err);
+          }
+          console.log('Secret found', secret);
+          if ('SecretString' in data) {
+            this.secrets[secret] = data.SecretString;
+            resolve();
+          }
+        });
+      })
+    );
     return Promise.all(promises);
   }
   
