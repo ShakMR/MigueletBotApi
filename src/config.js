@@ -1,9 +1,11 @@
 const {
   SOURCE_TYPE,
-  BASE_PATH = '../'
+  BASE_PATH = '../',
+  TELEGRAM_TOKEN = 'token',
 } = process.env;
 
 module.exports = {
+  REGION: 'eu-west-1',
   MATOMO: {
     URL: 'https://mordor.suilabs.com/piwik.php',
     SITE_ID: 6,
@@ -17,5 +19,13 @@ module.exports = {
   FS: {
     BASE_PATH: BASE_PATH,
   },
-  MAPPING_FILE: 'mapping.json' 
+  MAPPING_FILE: 'mapping.json',
+  
+  telegram: {
+    url: 'https://api.telegram.org/bot',
+    token: 'telegram_bot_token',
+  },
+  secrets: [
+    'telegram_bot_token',
+  ]
 }

@@ -2,6 +2,8 @@ const MatomoTracker = require('matomo-tracker');
 
 const config = require('./config');
 const { FileProviderFactory, SOURCE_TYPES} = require('./services/FileProvider/FileProviderFactory');
+const { ClientFactory } = require('./services/Client/ClientFactory');
+const SecretService = require('./services/Secrets/SecretService');
 
 const chooseFile = require('./randomModule');
 
@@ -29,40 +31,28 @@ const handler = async function(event, context) {
     })
   })
 
-  matomo.track({
-    url: `lambda`,
-    e_c: 'info log',
-    e_a: 'init',
-    e_n: 'event',
-    e_v: JSON.stringify(event),
-  });
-
   console.log(JSON.stringify(event));
   
+  const secretService = new SecretService(config);
+  await secretService.fetch(config.secrets);
+  
+  const { client: clientParam } = event.queryStringParameters;
+  
+  const { body } = event;
+  
+  const client = ClientFactory.create(clientParam, config, secretService, body);
+  
   const { SOURCE_TYPE } = config;
-  const { [SOURCE_TYPE]: providerConfig } = config; 
-  
-  const [_, base, func] = event.path.split('/'); // info of file
-  
+  const { [SOURCE_TYPE]: providerConfig } = config;
+     
   const provider = FileProviderFactory.create(SOURCE_TYPES[SOURCE_TYPE], providerConfig);
-
+  
   try {
-    switch (func) {
-      case 'file':
-        return {
-          headers: { "Content-Type": "audio/mpeg" },
-          statusCode: 200,
-          body: (await getRandomAudio(provider, config)).toString('base64'),
-          isBase64Encoded: true
-        }
-      case 'info':
-        return {
-          headers: { "Content-Type": "application/json" },
-          statusCode: 200,
-          body: { data: await getRandomAudioInfo(provider, config) },
-          isBase64Encoded: false
-        }
-    }
+    const audio = await getRandomAudioInfo(provider, config);
+    client.sendAudio(audio.URI);
+    return {
+      statusCode: 200,
+    };
   } catch (err) {
     matomo.track({
       url: 'lambda-error',
