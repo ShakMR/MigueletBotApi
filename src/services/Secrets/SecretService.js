@@ -1,12 +1,13 @@
 const AWS = require('aws-sdk');
 
 class SecretService {
-  constructor(config) {
+  constructor(config, dry_run) {
     this.client = new AWS.SecretsManager({
       region: config.REGION,
     });
     
     this.secrets = {}
+    this.dry_run = dry_run;
   }
   
   fetch(secretsToFetch) {
@@ -31,7 +32,7 @@ class SecretService {
   }
   
   getSecret(secretName) {
-    if (!(secretName in this.secrets)) {
+    if (!this.dry_run && !(secretName in this.secrets)) {
       console.error(this.secrets);
       throw new Error(`secret ${secretName} not found`);
     }

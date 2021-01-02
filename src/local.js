@@ -5,13 +5,17 @@ Index.handler({
   queryStringParameters: {
     client: 'telegram',
   },
-  body: {
+  body: JSON.stringify({
     message: {
       chat: {
         id: 'id',
-      }
+      },
+      text: 'caca',
     }
-  }
+  })
+},
+{
+  dry_run: true,
 },
   {})
   .then(console.log)

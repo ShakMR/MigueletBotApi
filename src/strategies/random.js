@@ -5,4 +5,6 @@ const chooseFile = async (provider, config) => {
   return mapping[randIndex];
 }
 
-module.exports = chooseFile;
+module.exports = {
+  chooseFile
+};

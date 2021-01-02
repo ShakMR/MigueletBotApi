@@ -5,19 +5,23 @@ const { FileProviderFactory, SOURCE_TYPES} = require('./services/FileProvider/Fi
 const { ClientFactory } = require('./services/Client/ClientFactory');
 const SecretService = require('./services/Secrets/SecretService');
 
-const chooseFile = require('./randomModule');
+const randomModule = require('./strategies/random');
+const SearchByTags = require('./strategies/searchByTag');
 
-const getRandomAudioInfo = async (provider, config) => {
-  const audioMapping = await chooseFile(provider, config);
-  return {
-    ...audioMapping,
-    URI: await provider.getFileURI(audioMapping.file),
-  };
+const getAudioInfo = async (strategy, provider, config, ...extra) => {
+  const audioMapping = await strategy.chooseFile(provider, config, ...extra);
+  if (audioMapping) {
+    return {
+      ...audioMapping,
+      URI: await provider.getFileURI(audioMapping.file),
+    };
+  }
+  return null;
 }
 
-const getRandomAudio = async (provider, config) => {
-  const audioMapping = await chooseFile(provider, config);
-  return provider.getFile(audioMapping.file);
+const commandsMap = {
+  random: randomModule,
+  tags: SearchByTags,
 }
 
 const handler = async function(event, context) {
@@ -33,14 +37,19 @@ const handler = async function(event, context) {
 
   console.log(JSON.stringify(event));
   
-  const secretService = new SecretService(config);
-  await secretService.fetch(config.secrets);
+  const dry_run = context.dry_run || false;
+  
+  const secretService = new SecretService(config, dry_run);
+  if (!dry_run) {
+    await secretService.fetch(config.secrets);
+  }
   
   const { client: clientParam } = event.queryStringParameters;
   
   const { body } = event;
   
-  const client = ClientFactory.create(clientParam, config, secretService, body);
+  const client = ClientFactory.create(clientParam, config, secretService, body, dry_run);
+  const { command, ...extraCommandParams } = client.resolveCommand();
   
   const { SOURCE_TYPE } = config;
   const { [SOURCE_TYPE]: providerConfig } = config;
@@ -48,10 +57,16 @@ const handler = async function(event, context) {
   const provider = FileProviderFactory.create(SOURCE_TYPES[SOURCE_TYPE], providerConfig);
   
   try {
-    const audio = await getRandomAudioInfo(provider, config);
-    client.sendAudio(audio.URI);
+    const audio = await getAudioInfo(commandsMap[command], provider, config, extraCommandParams);
+    if (audio) {
+      client.sendAudio(audio.URI);
+      return {
+        statusCode: 200,
+        body: audio
+      };
+    }
     return {
-      statusCode: 200,
+      statusCode: 404,
     };
   } catch (err) {
     matomo.track({
