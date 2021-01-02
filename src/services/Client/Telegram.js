@@ -3,7 +3,9 @@ const fetch = require('node-fetch');
 class Telegram {
   constructor(config, secret, params) {
     this.botUrl = config.telegram.url + secret.getSecret(config.telegram.token);
-    this.chatId = params.message.chat.id;
+    
+    const body = JSON.parse(params);
+    this.chatId = body.message.chat.id;
   }
   
   sendAudio(audioURI) {
