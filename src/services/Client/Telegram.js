@@ -9,7 +9,7 @@ class Telegram {
   }
   
   sendAudio(audioURI) {
-    const url = `${this.botUrl}/sendAudio?chat_id=${this.chatId}&audio=${audioURI}`;
+    const url = `${this.botUrl}/sendAudio?chat_id=${this.chatId}&audio=${encodeURIComponent(audioURI)}`;
     console.log(url);
     fetch(url)
       .then((resp) => resp.json())
