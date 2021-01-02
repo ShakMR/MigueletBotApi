@@ -1,7 +1,6 @@
 const {
   SOURCE_TYPE,
   BASE_PATH = '../',
-  TELEGRAM_TOKEN = 'token',
 } = process.env;
 
 module.exports = {
