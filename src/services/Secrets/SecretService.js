@@ -19,7 +19,9 @@ class SecretService {
           }
           console.log('Secret found', secret);
           if ('SecretString' in data) {
-            this.secrets[secret] = data.SecretString;
+            const secret = JSON.parse(data.SecretString);
+            const [key, value] = Object.entries(secret)[0];
+            this.secrets[key] = value;
             resolve();
           }
         });

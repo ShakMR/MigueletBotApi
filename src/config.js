@@ -4,7 +4,7 @@ const {
 } = process.env;
 
 module.exports = {
-  REGION: 'eu-west-1',
+  REGION: 'eu-west-3',
   MATOMO: {
     URL: 'https://mordor.suilabs.com/piwik.php',
     SITE_ID: 6,
@@ -22,7 +22,7 @@ module.exports = {
   
   telegram: {
     url: 'https://api.telegram.org/bot',
-    token: 'telegram_bot_token',
+    token: 'telegram_token',
   },
   secrets: [
     'telegram_bot_token',
