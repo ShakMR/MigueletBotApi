@@ -10,7 +10,7 @@ Index.handler({
       chat: {
         id: 'id',
       },
-      text: 'caca',
+      text: 'audios',
     }
   })
 },
