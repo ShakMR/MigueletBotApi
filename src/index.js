@@ -42,7 +42,7 @@ const handler = async function(event, context) {
   const { SOURCE_TYPE } = config;
   const { [SOURCE_TYPE]: providerConfig } = config; 
   
-  const [base, func] = event.path.split('/'); // info of file
+  const [_, base, func] = event.path.split('/'); // info of file
   
   const provider = FileProviderFactory.create(SOURCE_TYPES[SOURCE_TYPE], providerConfig);
 
