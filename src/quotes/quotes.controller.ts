@@ -33,11 +33,9 @@ export class QuotesController {
       resolvedQuery.strategy,
     );
 
-    const audioService: AudiosService = new AudiosService(
-      storage,
-      strategy,
-    );
-    const audio: Audio = audioService.get(resolvedQuery.params);
+    const audioService: AudiosService = new AudiosService(storage, strategy);
+    const audio: Audio = audioService.get(resolvedQuery.words);
+
     client.sendAudio(audio.URI);
   }
 }

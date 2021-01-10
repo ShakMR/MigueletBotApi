@@ -1,4 +1,4 @@
 export class ResolvedStrategy {
   strategy: string;
-  params: any[];
+  words: any[];
 }

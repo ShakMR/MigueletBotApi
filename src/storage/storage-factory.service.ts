@@ -16,7 +16,7 @@ export class StorageFactoryService {
   };
 
   static create(name: string): AbstractStorage {
-    Logger.debug('SELECTED storage', name);
+    Logger.debug(name, 'Storage Factory');
     const selectedStorage = StorageFactoryService.storageNameMap[name];
     if (selectedStorage) {
       return new storageSystemMap[selectedStorage]();

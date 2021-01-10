@@ -13,7 +13,7 @@ export class MessagingClientFactory {
   };
 
   static create(name: string): ClientInterface {
-    Logger.debug('SELECTED CLIENT', name);
+    Logger.debug(name, 'Client factory');
     const selectedClient = MessagingClientFactory.clientNames[name];
     if (selectedClient) {
       return new clientServices[selectedClient]();

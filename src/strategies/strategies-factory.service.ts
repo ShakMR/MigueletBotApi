@@ -16,7 +16,7 @@ export class StrategiesFactoryService {
   };
 
   static create(name: string): AbstractStrategy {
-    Logger.debug('SELECTED Strategy', name);
+    Logger.debug(name, 'Strategy Factory');
     const selectedStrategy = StrategiesFactoryService.strategyNames[name];
     if (selectedStrategy) {
       return new strategyServices[selectedStrategy]();

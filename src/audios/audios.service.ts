@@ -29,6 +29,6 @@ export class AudiosService {
   }
 
   get(params: any[]) {
-    return undefined;
+    return new Audio();
   }
 }
